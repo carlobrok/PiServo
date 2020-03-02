@@ -8,6 +8,7 @@
 //#include <wiringPiI2C.h>
 #include <iostream>
 #include <thread>
+#include <chrono>
 
 #include "KamelDevices.h"
 
@@ -73,7 +74,7 @@ int pca9685_setup(int address) {
 	i2c_smbus_write_byte_data(fd, PCA9685_MODE1, wake);
 
 	// Now wait a millisecond until oscillator finished stabilizing and restart PWM.
-	std::this_thread::sleep_for(1);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	i2c_smbus_write_byte_data(fd, PCA9685_MODE1, restart);
 
   return fd;
