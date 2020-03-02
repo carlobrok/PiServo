@@ -7,6 +7,10 @@ int kamelI2Copen(int devId);
 
 int pca9685_setup(int address);
 
+inline int get_register(uint8_t pin) {
+	 return (pin >= 16 ? 0xFA : 0x6 + 4 * pin);
+}
+
 class Servo {
 public:
   Servo(int pca9685_fd, uint8_t pin);

@@ -37,6 +37,7 @@ int kamelI2Copen(int devId) {
 
 
 #define PCA9685_MODE1 0x0
+#define PCA9685_PRESCALE 0xFE
 
 int pca9685_setup(int address) {
   int fd = kamelI2Copen(address);
@@ -71,7 +72,7 @@ int pca9685_setup(int address) {
 	i2c_smbus_write_byte_data(fd, PCA9685_MODE1, wake);
 
 	// Now wait a millisecond until oscillator finished stabilizing and restart PWM.
-	delay(1);
+	std::this_thread::sleep_for(1);
 	i2c_smbus_write_byte_data(fd, PCA9685_MODE1, restart);
 
   return fd;
@@ -104,18 +105,18 @@ void Servo::set_angle(int angle) {
   //pca9685PWMWrite(m_fd, m_pin, 0, off);
 
 	// Write to on and off registers and mask the 12 lowest bits of data to overwrite full-on and off
-	i2c_smbus_write_word_data(fd, get_register(m_pin), 0 & 0x0FFF);
-	i2c_smbus_write_word_data(fd, get_register(m_pin) + 2, off & 0x0FFF);
+	i2c_smbus_write_word_data(m_fd, get_register(m_pin), 0 & 0x0FFF);
+	i2c_smbus_write_word_data(m_fd, get_register(m_pin) + 2, off & 0x0FFF);
 }
 
 void Servo::off() {
   //pca9685FullOff(m_fd, m_pin, 1);
 
 	int reg = get_register(m_pin) + 3;		// LEDX_OFF_H
-	int state = i2c_smbus_read_byte_data(fd, reg);
+	int state = i2c_smbus_read_byte_data(m_fd, reg);
 
 	// Set bit 4 to 1 or 0 accordingly
 	state |= 0x10;
 
-	i2c_smbus_write_byte_data(fd, reg, state);
+	i2c_smbus_write_byte_data(m_fd, reg, state);
 }

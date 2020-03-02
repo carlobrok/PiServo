@@ -20,7 +20,7 @@ int main() {
     s1.set_angle(180);
     std::cout << "180" << '\n';
     usleep(1000*1000);
-    pca9685FullOff(servo_fd, 2, 1);
+    s1.off();
     usleep(1000*1000);
   }
 }
